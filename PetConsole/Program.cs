@@ -1,7 +1,7 @@
 ﻿using PetLib;
 
-//IPetRepository repo = new CSVPetRepository("Pets.csv");
-IPetRepository repo = new BinaryPetRepository("Pets.data");
+IPetRepository repo = new CSVPetRepository("Pets.csv");
+//IPetRepository repo = new BinaryPetRepository("Pets.data");
 List<Pet> pets;
 
 string answer;
@@ -20,19 +20,37 @@ do
             ViewPet(repo);
             break;
         case "D":
-            DeletePet(pets);
+            DeletePet(repo);
+            break;
+        case "U":
+            UpdatePet(repo);
             break;
     }
 } while (answer.ToUpper() != "X");
 
-static void DeletePet(List<Pet> pets)
+static void UpdatePet(IPetRepository repo)
 {
     var petName = ReadString("Enter the pet's name: ");
-    var pet = pets.FirstOrDefault(p => p.Name.ToLower() == petName.ToLower());
+    var pet = repo.Read(petName);
+    if (pet != null)
+    {
+        var newPet = ReadPet();
+        repo.Update(petName, newPet);
+    }
+    else
+    {
+        Console.WriteLine($"{petName} was not found!");
+    }
+}
+
+static void DeletePet(IPetRepository repo)
+{
+    var petName = ReadString("Enter the pet's name: ");
+    var pet = repo.Read(petName);
     if (pet != null)
     {
         // You should really confirm this!
-        pets.Remove(pet);
+        repo.Delete(petName);
         Console.WriteLine($"{petName} was removed!");
     }
     else
@@ -79,7 +97,8 @@ static void ShowAllPets(List<Pet> pets)
 
 static void ShowMenu()
 {
-    Console.WriteLine("C = Create Pet | V = View Pet | D = Delete Pet | X = Exit");
+    Console.WriteLine("C = Create Pet\nV = View Pet\nD = Delete Pet\n" +
+        "U = Update pet\nX = Exit");
 }
 
 

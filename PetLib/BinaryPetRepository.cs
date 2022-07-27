@@ -27,6 +27,11 @@ public class BinaryPetRepository : IPetRepository
         return pet;
     }
 
+    public void Delete(string id)
+    {
+        throw new NotImplementedException();
+    }
+
     public Pet? Read(string id)
     {
         Pet? pet = null;
@@ -84,6 +89,11 @@ public class BinaryPetRepository : IPetRepository
             Console.WriteLine(ex.Message);
         }
         return pets;
+    }
+
+    public void Update(string oldId, Pet pet)
+    {
+        throw new NotImplementedException();
     }
 }
 

@@ -24,6 +24,38 @@ public class CSVPetRepository : IPetRepository
         return pet;
     }
 
+    public void Delete(string id)
+    {
+        try
+        {
+            string tmpPath = _filePath + ".temp";
+            StreamWriter writer = new(tmpPath, append: true);
+
+            string? record;
+            StreamReader reader = new(_filePath);
+            record = reader.ReadLine();
+            // Check for end-of-file (EOF)
+            while (record != null)
+            {
+                string[] fields = record.Split(',');
+                if (fields[0] != id)
+                {
+                    writer.WriteLine(record);
+                }
+                record = reader.ReadLine();
+            }
+            reader.Close();
+            writer.Close();
+
+            File.Delete(_filePath);
+            File.Move(tmpPath, _filePath); // Rename
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
     public Pet? Read(string id)
     {
         Pet? pet = null;
@@ -84,6 +116,42 @@ public class CSVPetRepository : IPetRepository
             Console.WriteLine(ex.Message);
         }
         return pets;
+    }
+
+    public void Update(string oldId, Pet pet)
+    {
+        try
+        {
+            string tmpPath = _filePath + ".temp";
+            StreamWriter writer = new(tmpPath, append: true);
+
+            string? record;
+            StreamReader reader = new(_filePath);
+            record = reader.ReadLine();
+            // Check for end-of-file (EOF)
+            while (record != null)
+            {
+                string[] fields = record.Split(',');
+                if (fields[0] != oldId)
+                {
+                    writer.WriteLine(record);
+                }
+                else
+                {
+                    writer.WriteLine(pet.ToCSV());
+                }
+                record = reader.ReadLine();
+            }
+            reader.Close();
+            writer.Close();
+
+            File.Delete(_filePath);
+            File.Move(tmpPath, _filePath); // Rename
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 }
 
